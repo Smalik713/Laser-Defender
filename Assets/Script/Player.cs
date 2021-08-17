@@ -5,8 +5,12 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     // Configuration Parameters
-    [SerializeField] float MoveSpeed = 10f;
+    [Header("Player")]
+    [SerializeField] float moveSpeed = 10f;
     [SerializeField] float padding = 1f;
+    [SerializeField] int health = 200;
+
+    [Header("Projectiles")]
     [SerializeField] GameObject laserPrefab;
     [SerializeField] float projectileSpeed = 10f;
     [SerializeField] float projectileFiringPeriod = 0.1f;
@@ -37,6 +41,22 @@ public class Player : MonoBehaviour
         Fire();
     }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        DamageDealer damageDealer = other.gameObject.GetComponent<DamageDealer>();
+        ProcessHit(damageDealer);
+    }
+
+    private void ProcessHit(DamageDealer damageDealer)
+    {
+        health -= damageDealer.GetDamage();
+        
+        if (health <= 0)
+        {
+            Destroy(gameObject);
+        }
+    }
+
     private void Fire()
     {
         if (Input.GetButtonDown("Fire1"))
@@ -62,8 +82,8 @@ public class Player : MonoBehaviour
 
     private void Move()
     {
-        var deltaX = Input.GetAxis("Horizontal") * Time.deltaTime * MoveSpeed;
-        var deltaY = Input.GetAxis("Vertical") * Time.deltaTime * MoveSpeed;
+        var deltaX = Input.GetAxis("Horizontal") * Time.deltaTime * moveSpeed;
+        var deltaY = Input.GetAxis("Vertical") * Time.deltaTime * moveSpeed;
 
         var newXPos = Mathf.Clamp( transform.position.x + deltaX, xMin, xMax );
         var newYPos = Mathf.Clamp( transform.position.y + deltaY, yMin, yMax );
@@ -84,8 +104,8 @@ public class Player : MonoBehaviour
 
 
 
-    
 
+   
 
 
 
